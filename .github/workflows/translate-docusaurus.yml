@@ -1,0 +1,66 @@
+name: Translate Docusaurus Documentation
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  checks: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  translate-docs:
+    if: github.event.label.name == 'TRANSLATE DOCUSAURUS'
+    timeout-minutes: 1440
+    runs-on: self-hosted
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch master branch for diff
+        run: git fetch origin master
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ${{ github.workspace }}
+
+      - name: Translation process
+        working-directory: ${{ github.workspace }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          TRANSLATION_PROMPT: ${{ secrets.TRANSLATION_PROMPT }}
+          TRANSLATION_GLOSSARY: ${{ secrets.TRANSLATION_GLOSSARY }}
+        run: node translate.js
+
+      - name: Commit translations
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git add -A i18n/
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-translate docs"
+            git push origin HEAD:${{ github.head_ref }}
+          else
+            echo "No translation changes to commit"
+          fi
+
+      - name: Remove label
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              name: 'TRANSLATE DOCUSAURUS'
+            })
