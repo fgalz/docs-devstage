@@ -84,7 +84,11 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Auto-translate: ${prTitle} (#${prNumber})`,
+<<<<<<< Updated upstream
                 body: `Automated translations for #${prNumber}.\n\nMerge this PR **after** #${prNumber} has been merged.`,
+=======
+                body: `Automated translations for ${prTitle} (#${prNumber}).\n\nMerge this PR **after** ${prTitle} (#${prNumber}) has been merged.`,
+>>>>>>> Stashed changes
                 head: branch,
                 base: baseBranch
               });
