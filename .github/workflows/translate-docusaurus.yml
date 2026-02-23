@@ -85,7 +85,11 @@ jobs:
                 repo: context.repo.repo,
                 title: `Auto-translate: ${prTitle} (#${prNumber})`,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 body: `Automated translations for #${prNumber}.\n\nMerge this PR **after** #${prNumber} has been merged.`,
+=======
+                body: `Automated translations for ${prTitle} (#${prNumber}).\n\nMerge this PR **after** ${prTitle} (#${prNumber}) has been merged.`,
+>>>>>>> Stashed changes
 =======
                 body: `Automated translations for ${prTitle} (#${prNumber}).\n\nMerge this PR **after** ${prTitle} (#${prNumber}) has been merged.`,
 >>>>>>> Stashed changes
@@ -97,7 +101,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body: `Translations have been generated and are available in #${newPR.number}.\nPlease merge the translation PR after this PR is merged.`
+                body: `Translations for ${prTitle} (#${prNumber}) have been generated and are available in #${newPR.number}.\nPlease merge the translation PR after this PR is merged.`
               });
             } else {
               await github.rest.issues.createComment({
